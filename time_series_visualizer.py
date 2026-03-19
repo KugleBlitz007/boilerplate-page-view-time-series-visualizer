@@ -4,19 +4,6 @@ import seaborn as sns
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
-
-class MyDataFrame(pd.DataFrame):
-    @property
-    def _constructor(self):
-        return MyDataFrame
-
-    def count(self, *args, **kwargs):
-        result = super().count(*args, **kwargs)
-        if isinstance(result, pd.Series) and len(result) == 1:
-            return result.iloc[0]
-        return result
-
-
 # Import data (Make sure to parse dates. Consider setting index column to 'date'.)
 df = pd.read_csv("fcc-forum-pageviews.csv", parse_dates=["date"], index_col="date")
 
@@ -25,13 +12,9 @@ low = df["value"].quantile(0.025)
 high = df["value"].quantile(0.975)
 df = df[(df["value"] >= low) & (df["value"] <= high)]
 
-# turn it into custom dataframe so test won't break
-df = MyDataFrame(df)
-
-
 def draw_line_plot():
     # Draw line plot
-    fig, ax = plt.subplots(figsize=(15, 5))
+    fig, ax = plt.subplots(figsize=(32, 10))
     ax.plot(df.index, df["value"], color="red")
 
     ax.set_title("Daily freeCodeCamp Forum Page Views 5/2016-12/2019")
@@ -41,7 +24,6 @@ def draw_line_plot():
     # Save image and return fig (don't change this part)
     fig.savefig('line_plot.png')
     return fig
-
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
@@ -57,7 +39,7 @@ def draw_bar_plot():
         "July", "August", "September", "October", "November", "December"
     ]]
 
-    fig = df_bar.plot(kind="bar", figsize=(14, 7)).figure
+    fig = df_bar.plot(kind="bar", figsize=(15, 13)).figure
     ax = fig.axes[0]
 
     ax.set_xlabel("Years")
@@ -77,7 +59,7 @@ def draw_box_plot():
     df_box["month"] = [d.strftime("%b") for d in df_box.date]
 
     # Draw box plots (using Seaborn)
-    fig, axes = plt.subplots(1, 2, figsize=(20, 8))
+    fig, axes = plt.subplots(1, 2, figsize=(28, 10))
 
     sns.boxplot(x="year", y="value", data=df_box, ax=axes[0])
     axes[0].set_title("Year-wise Box Plot (Trend)")
@@ -90,6 +72,7 @@ def draw_box_plot():
         data=df_box,
         order=["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        #This was needed otherwise I had to change the test codes
         ax=axes[1]
     )
     axes[1].set_title("Month-wise Box Plot (Seasonality)")
