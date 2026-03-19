@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import numpy as np
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
@@ -8,6 +9,10 @@ register_matplotlib_converters()
 df = pd.read_csv("fcc-forum-pageviews.csv", parse_dates=["date"], index_col="date")
 
 # Clean data
+print("Numpy version :", np.__version__)
+print("Pandas version :", pd.__version__)
+print("Seaborn", sns.__version__)
+
 low = df["value"].quantile(0.025)
 high = df["value"].quantile(0.975)
 df = df[(df["value"] >= low) & (df["value"] <= high)]
